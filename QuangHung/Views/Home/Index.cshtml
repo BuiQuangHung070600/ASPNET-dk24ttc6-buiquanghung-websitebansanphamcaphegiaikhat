@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+
+    List<Hoatuoi.Models.Product> products = ViewBag.ListProduct as List<Hoatuoi.Models.Product>;
+}
+<script>
+    $(document).ready(function () {
+        $(".item_add").on('click', function () {
+            event.preventDefault();
+            var ID = $(this).data("id");
+            $.ajax({
+                url: '/Cart/AddItem',
+                data: {
+                    ProductID: ID
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status == true) {
+                        $.notify("Thêm vào giỏ hàng thành công!", "success");
+
+                        $.ajax({
+                            url: '/Cart/GetTotalCart',
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (response) {
+                                $(".simpleCart_total").html(response.TotalPrice + "₫ (" + response.TotalQuantity + ")")
+                            },
+                        });
+                    } else {
+                        $.notify("Số lượng không đủ!", "error");
+                    }
+                },
+            });
+        })
+    });
+</script>
+<!--banner-->
+<div class="banner">
+    <div class="matter-banner">
+        <div class="slider">
+            <div class="callbacks_container">
+                <ul class="rslides" id="slider1">
+                    <li>
+                        <img src="~/Content/images/hung3.png" alt="">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"> </div>
+</div>
+<!--//banner-->
+@*<div class="products">
+    <div class="container">
+        <h2>Sản phẩm bán chạy</h2>
+        <div class="col-md-9">
+            @if (products.Count > 0)
+            {
+                int count = 1;
+            loop:
+                <div class="content-top1">
+                    @for (int i = count - 1; i < products.Count; i++)
+                    {
+                        <div class="col-md-4 col-md4">
+                            <div class="col-md1 simpleCart_shelfItem">
+                                <a href="/Product/Details/@products[i].ID">
+                                    <img class="img-responsive" src="~/Content/images/@products[i].Image1" alt="" style="height:250px;width:200px" />
+                                </a>
+                                <h3><a href="/Product/Details/@products[i].ID">@products[i].Name</a></h3>
+                                <div class="price">
+                                    <h5 class="item_price">@products[i].Price.Value.ToString("#,##")₫</h5>
+                                    <p class="item_price">Đã bán: @products[i].PurchasedCount (Còn lại @products[i].Quantity)</p>
+                                    <a href="#" class="item_add" data-id="@products[i].ID">Chọn mua</a>
+                                    <div class="clearfix"> </div>
+                                </div>
+                            </div>
+                        </div>
+                        if (count % 3 == 0)
+                        {
+                            @Html.Raw("</div>");
+                            count += 1;
+                            goto loop;
+                        }
+                        count += 1;
+                    }
+                    <div class="clearfix"> </div>
+                </div>
+            }
+            else
+            {
+                <h3>Không có sản phẩm nào...</h3>
+            }
+        </div>
+    </div>
+</div>*@
+<div class="products">
+    <div class="container">
+        <h2>Sản phẩm bán chạy</h2>
+
+        <div class="col-md-9 col-md-offset-1">
+            @if (products != null && products.Count > 0)
+            {
+                <div class="row">
+                    @foreach (var p in products)
+                    {
+                        <div class="col-md-4 col-sm-6">
+                            <div class="col-md1 simpleCart_shelfItem">
+
+                                <a href="/Product/Details/@p.ID">
+                                    <img class="img-responsive"
+                                         src="~/Content/images/@p.Image1"
+                                         style="height:250px;width:200px;margin:0 auto;" />
+                                </a>
+
+                                <h3>
+                                    <a href="/Product/Details/@p.ID">@p.Name</a>
+                                </h3>
+
+                                <div class="price">
+                                    <h5 class="item_price">
+                                        @p.Price.Value.ToString("#,##")₫
+                                    </h5>
+
+                                    <p>
+                                        Đã bán: @p.PurchasedCount (Còn lại @p.Quantity)
+                                    </p>
+
+                                    <a href="#" class="item_add" data-id="@p.ID">
+                                        Chọn mua
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <h3>Không có sản phẩm nào...</h3>
+            }
+        </div>
+    </div>
+</div>
